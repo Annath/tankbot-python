@@ -6,9 +6,11 @@ import time
 import Adafruit_BBIO.ADC as ADC
 
 pin = "P9_40"
+r1 = 7.85
+r2 = 0.987
 
 def signal_handler(sig, frame):
-    print('Caught SIGINT, stopping')
+    print('')
 
     sys.exit(0)
 
@@ -22,13 +24,13 @@ def read_adc(_pin):
 signal.signal(signal.SIGINT, signal_handler)
 ADC.setup()
 
-while True:
-    mult = 9.2647
-    raw = read_adc(pin)
-    volts = raw * 1.8
-    vbat = volts * mult
+mult = ((r1 + r2) / r2)
+raw = read_adc(pin)
+volts = raw * 1.8
+vbat = volts * mult
 
-    print(f"mult = {mult}")
-    print(f"raw = {volts}, Vbat = {vbat}")
+print("r1 = {:.3f} kOhm".format(r1))
+print("r2 = {:.3f} kOhm".format(r2))
+print("multiplier = {:.4f}\n".format(mult))
+print("adc = {:.4f} V, Vbat = {:.4f} V".format(volts, vbat))
 
-    time.sleep(0.2)
